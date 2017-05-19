@@ -20,11 +20,4 @@ $headerOpts = [
 </div>
 
 </body>
-<script>
-    UserKeychain.setPassword('the sky is falling');
-    console.log('HMACKey', UserKeychain.HMACKey);
-    console.log('PassHash', UserKeychain.PassHash);
-    console.log('ContentKey', UserKeychain.ContentKey);
-    console.log('ContentKeyKey', UserKeychain.ContentKeyKey);
-</script>
 </html>
