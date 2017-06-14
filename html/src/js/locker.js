@@ -40,8 +40,10 @@ var lockerApp = new Vue({
         loader: true,
         success: '',
         error: '',
+        warning: '',
         objectHash: false,
         object: getBlankLocker(),
+        mergeNeeded: false,
 
         // icon options
         icons: [
@@ -80,6 +82,10 @@ var lockerApp = new Vue({
          * Timeouts
          */
         timeouts: {},
+        durations: {
+            loadIndex: 30 * 1000, // 30 seconds
+            checkForChanges: 60 * 1000, // 1 minute
+        },
 
         // search query
         query: '',
@@ -95,12 +101,14 @@ var lockerApp = new Vue({
         self.loadIndex();
         self.loadObject();
 
-        self.timeouts.loadIndex = setInterval(self.loadIndex, 3000000); // 5 minutes
+        self.timeouts.loadIndex       = setInterval(self.loadIndex, self.durations.loadIndex);
+        self.timeouts.checkForChanges = setInterval(self.checkForChanges, self.durations.checkForChanges);
+
     },
 
     computed: {
         hasChanged: function() {
-            return this.objectHash !== md5(json_encode(this.object));
+            return this.objectHash !== this.hashObject(this.object);
         }
     },
 
@@ -111,11 +119,16 @@ var lockerApp = new Vue({
             this.error = this.success = '';
         },
 
+        // hashes the object
+        hashObject: function(obj) {
+            return md5(json_encode(obj))
+        },
+
         // Sets the object as a blank object
         resetObject: function() {
             this.object      = getBlankLocker();
             // this.hasChanged = false;
-            this.objectHash  = md5(json_encode(this.object));
+            this.objectHash  = this.hashObject(this.object);
         },
 
         /// Adds a blank item to the items array
@@ -141,8 +154,8 @@ var lockerApp = new Vue({
             }, 10);
         },
 
-        // decrypts, formats, and sets the Locker object
-        setObject: function(obj) {
+        // parses a response string into an object
+        getObjectFromResponse: function(obj) {
             if (typeof obj === "string")
                 obj = json_decode(obj);
 
@@ -163,7 +176,13 @@ var lockerApp = new Vue({
                 });
             }
 
-            this.objectHash = md5(json_encode(obj));
+            return obj
+        },
+
+        // decrypts, formats, and sets the Locker object
+        setObject: function(obj) {
+            obj             = this.getObjectFromResponse(obj);
+            this.objectHash = this.hashObject(obj);
             this.object     = obj;
         },
 
@@ -221,44 +240,179 @@ var lockerApp = new Vue({
 
         },
 
-        // Saves the Locker object
-        saveObject: function() {
+        // checks for changes
+        checkForChanges: function(callback) {
+            var lockerId = getLockerId(),
+                self     = this;
+
+            // if we're adding a new group, just return
+            if (!lockerId.length) {
+                runCallback(callback);
+                return;
+            }
+
+            // send or pull the object
+            $.ajax({
+                method: 'get',
+                url: '/locker/' + lockerId,
+                success: function(result) {
+                    result = self.getObjectFromResponse(result);
+                    if (self.hasChanged) {
+                        // current locker has changed, and remote locker has changed
+                        if (self.objectHash !== self.hashObject(result)) {
+                            self.warning     = 'This Locker has changed since it was loaded.';
+                            self.mergeNeeded = true;
+                        }
+
+                    } else {
+                        // current locker has not changed. Overload the object for a fresh copy
+                        self.setObject(result);
+                    }
+
+                    runCallback(callback);
+                },
+                error: function(jqXHR) {
+                    if (code == 401) {
+                        location.reload();
+                        return;
+                    }
+                    self.error = jqXHR.responseText;
+                }
+            });
+
+        },
+
+        // merges two objects together
+        mergeObject: function(callback) {
             var self = this;
             self.toggleLoader(true);
             self.clearMessages();
 
-            var ajaxData = $.extend(true, self.object, {
-                items: AES.encrypt(json_encode(self.object.items))
-            });
+            var lockerId = getLockerId();
 
+            // if we're adding a new group, just
+            if (!lockerId.length) {
+                self.toggleLoader(false);
+                runCallback(callback);
+                return;
+            }
+
+            // returns the item index with the associated _id
+            function _find_item_key(_id, items) {
+                for (var i in items) if (items[i]._id === _id) return i;
+                return false;
+            }
+
+            // generates a unique hash of the item object
+            function _hash_item(item) {
+                // var $$hashKey = item.$$hashKey;
+                delete item.$$hashKey;
+                var hash = self.hashObject(item);
+                // item.$$hashKey = $$hashKey;
+                return hash;
+            }
+
+            clearInterval(self.timeouts.checkForChanges);
+
+            // send or pull the object
             $.ajax({
-                method: 'post',
-                url: '/locker/' + self.object.id,
-                data: json_encode(self.object),
+                method: 'get',
+                url: '/locker/' + lockerId,
                 success: function(result) {
-                    // Set the data into the object
-                    self.setObject(result);
+                    var localObj  = clone(self.object);
+                    var remoteObj = self.getObjectFromResponse(result);
 
-                    // set the hash id
-                    location.hash = '#/' + self.object.id;
+                    // only worry about merging if the DB object has actually changed
+                    if (self.hashObject(remoteObj) !== self.objectHash) {
 
-                    self.loadIndex();
+                        // loop through remoteObj items.
+                        for (var i in remoteObj.items) {
+                            var item           = remoteObj.items[i];
+                            var local_item_key = _find_item_key(item._id, localObj.items);
+
+                            if (local_item_key === false) {
+                                // If _id does not exist, append.
+                                localObj.items.push(item);
+
+                            } else if (_hash_item(localObj.items[local_item_key]) !== _hash_item(item)) {
+                                // If _id does exist and _hash is different, put beneath
+                                localObj.items.splice(local_item_key, 0, item);
+
+                            }
+                        }
+
+                        if (localObj.note.trim() !== remoteObj.note.trim())
+                            localObj.note += "\n====================MERGE====================\n" + remoteObj.note;
+
+                        self.object      = localObj;
+                        self.objectHash  = self.hashObject(remoteObj); // set as remoteObj so we know not to merge again
+
+                    }
+
+                    self.mergeNeeded = false;
                     self.toggleLoader(false);
-
-                    // set success message
-                    self.success = 'Successfully saved the object';
-
+                    self.timeouts.checkForChanges = setInterval(self.checkForChanges, self.durations.checkForChanges);
+                    runCallback(callback);
                 },
                 error: function(jqXHR) {
-                    if (jqXHR.status == 401) {
+                    if (code == 401) {
                         location.reload();
                         return;
                     }
-
                     self.error = jqXHR.responseText;
                     self.toggleLoader(false);
+                    self.timeouts.checkForChanges = setInterval(self.checkForChanges, self.durations.checkForChanges);
+                    runCallback(callback);
                 }
+            });
+        },
 
+        // Saves the Locker object
+        saveObject: function() {
+            var self = this;
+
+            // perform merge first in acse there are any outstanding changes that need to be loaded
+            self.mergeObject(function() {
+
+                self.toggleLoader(true);
+                self.clearMessages();
+
+                // encrypt
+                var ajaxData = $.extend(true, clone(self.object), {
+                    items: AES.encrypt(json_encode(self.object.items))
+                });
+
+                console.log(ajaxData);
+
+                $.ajax({
+                    method: 'post',
+                    url: '/locker/' + self.object.id,
+                    data: json_encode(ajaxData),
+                    success: function(result) {
+                        // Set the data into the object
+                        self.setObject(result);
+
+                        // set the hash id
+                        location.hash = '#/' + self.object.id;
+
+                        self.loadIndex();
+                        self.toggleLoader(false);
+
+                        // set success message
+                        self.success = 'Successfully saved the object';
+
+                    },
+                    error: function(jqXHR) {
+                        if (jqXHR.status == 401) {
+                            location.reload();
+                            return;
+                        }
+
+                        self.error = jqXHR.responseText;
+                        self.toggleLoader(false);
+                    }
+
+                });
             });
         },
 

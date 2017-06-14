@@ -22,9 +22,11 @@ $headerOpts = [
 
                 <h2 class="form-signin-heading">Please sign in</h2>
 
+                <label>Email:</label>
                 <input type="email" class="form-control" placeholder="john.smith@example.io" v-model="email" tabindex="1" required autofocus>
                 <br />
 
+                <label>Password:</label>
                 <input type="password" class="form-control" placeholder="somepass123" v-model="pass" required>
                 <br />
 

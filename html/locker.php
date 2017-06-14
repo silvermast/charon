@@ -20,7 +20,8 @@ $headerOpts = [
         <div id="locker-app">
 
             <nav-bar pageTitle="Password Locker">
-                <span class="btn btn-success" v-if="hasChanged" @click="saveObject">Save Pending Changes</span>
+                <span class="btn btn-success" v-if="hasChanged & !mergeNeeded" @click="saveObject">Save Pending Changes</span>
+                <span class="btn btn-warning" v-if="mergeNeeded" @click="mergeObject">Merge Changes</span>
             </nav-bar>
 
             <div class="container-fluid">
@@ -60,11 +61,15 @@ $headerOpts = [
 
                             <div class="alert alert-success" v-if="success">
                                 <button type="button" class="close" @click="clearMessages">&times;</button>
-                                <span v-text="success"></span>
+                                <span v-html="success"></span>
+                            </div>
+                            <div class="alert alert-warning" v-if="warning">
+                                <button type="button" class="close" @click="clearMessages">&times;</button>
+                                <span v-html="warning"></span>
                             </div>
                             <div class="alert alert-danger" v-if="error">
                                 <button type="button" class="close" @click="clearMessages">&times;</button>
-                                <span v-text="error"></span>
+                                <span v-html="error"></span>
                             </div>
 
                             <h1 class="page-header">
@@ -213,7 +218,7 @@ $headerOpts = [
 </body>
 
 <script type="text/x-template" id="tmpl-nav-bar"><?php include(ROOT . '/html/templates/nav-bar.html'); ?></script>
-<script src="/src/js/build.js"></script>
-<script src="/src/js/locker.js"></script>
+<script src="/dist/js/build.js"></script>
+<script src="/dist/js/locker.js"></script>
 
 </html>

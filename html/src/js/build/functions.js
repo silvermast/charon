@@ -53,6 +53,14 @@ function json_encode(param) {
     return JSON.stringify(param);
 }
 
+function clone(obj) {
+    return json_decode(json_encode(obj));
+}
+
+function runCallback(fn) {
+    if (fn instanceof Function) fn.call();
+}
+
 /**
  * Generates a unique id
  * @returns {number}
