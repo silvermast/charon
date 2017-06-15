@@ -68,30 +68,7 @@ class Locker extends core\APIRoute {
      * @return array
      */
     private function _get_index(): array {
-        $index = [];
-
-        // @todo: create more memory-friendly implementation
-        $lockers = models\Locker::findMulti(['accountId' => models\Account::current()->id]);
-        foreach ($lockers as $locker) {
-            $meta = [];
-
-            foreach ($locker->items as $item) {
-                if (isset($item->title) && $item->title = trim($item->title)) $meta[$item->title] = 1;
-                if (isset($item->url) && $item->url = trim($item->url))       $meta[$item->url]   = 1;
-                if (isset($item->user) && $item->user = trim($item->user))    $meta[$item->user]  = 1;
-            }
-
-            if ($locker->note = trim($locker->note))
-                $meta[$locker->note] = 1;
-
-            $index[$locker->name] = [
-                'id'   => $locker->id,
-                'name' => $locker->name,
-                'meta' => array_keys($meta),
-            ];
-        }
-
-        ksort($index);
-        return array_values($index);
+        $lockers = models\Locker::findMulti(['accountId' => models\Account::current()->id], ['sort' => ['name' => 1]]);
+        return array_values($lockers);
     }
 }

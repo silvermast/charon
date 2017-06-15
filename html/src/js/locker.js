@@ -487,16 +487,12 @@ var lockerApp = new Vue({
             // first check the group name for a match
             if (this.index[id].name.match(regexp) !== null) return true;
 
-            // if the group name doesn't match, check all meta values
-            if (this.index[id].meta !== undefined) {
-                for (var i in this.index[id].meta) {
-                    if (this.index[id].meta[i].match && this.index[id].meta[i].match(regexp) !== null) {
-                        return true;
-                    }
-                }
-            }
+            // if it's not a match, try decrypting and checking
+            if (this.index[id].items.iv !== undefined)
+                this.index[id].items = AES.decryptToUtf8(this.index[id].items);
 
-            return false;
+            return this.index[id].items.match(regexp) !== null;
+
         },
 
         // Determines whether the field matches the query string

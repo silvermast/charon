@@ -119,11 +119,13 @@ abstract class Model {
     /**
      * Finds a single object
      * @param $query
+     * @param array $queryOptions
      * @return static|null
      */
-    public static function findOne($query) {
+    public static function findOne($query, $queryOptions = []) {
         try {
-            $dbQuery = new Query($query, ['limit' => 1]);
+            $queryOptions['limit'] = 1;
+            $dbQuery = new Query($query, $queryOptions);
             $cursor = self::_db()->executeQuery(static::getDBNamespace(), $dbQuery)->toArray();
             return current($cursor) ? static::new(current($cursor)) : null;
 
@@ -137,12 +139,13 @@ abstract class Model {
     /**
      * Returns an array of objects (in memory)
      * @param $query
+     * @param array $queryOptions
      * @return static[]
      */
-    public static function findMulti($query) {
+    public static function findMulti($query, $queryOptions = []) {
         $objects = [];
         try {
-            $dbQuery = new Query($query);
+            $dbQuery = new Query($query, $queryOptions);
             $result = self::_db()->executeQuery(static::getDBNamespace(), $dbQuery);
 
             foreach ($result as $row)
@@ -157,13 +160,14 @@ abstract class Model {
     /**
      * Returns the number of objects matching the query
      * @param $query
+     * @param array $queryOptions
      * @return int
      */
-    public static function count($query) {
+    public static function count($query, $queryOptions = []) {
         $count = 0;
         Debug::info($query);
         try {
-            $dbQuery = new Query($query);
+            $dbQuery = new Query($query, $queryOptions);
             $result = self::_db()->executeQuery(static::getDBNamespace(), $dbQuery);
 
             foreach ($result as $row)
