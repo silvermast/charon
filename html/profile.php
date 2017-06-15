@@ -5,7 +5,7 @@
 </head>
 
 <body>
-    <? core\Template::output('nav-bar.html'); ?>
+    <? core\Template::output('nav-bar.php'); ?>
 
     <!-- Fixes the strange chrome/firefox autocomplete spaz bug -->
     <input type="text" name="user" value="" style="display:none;" />

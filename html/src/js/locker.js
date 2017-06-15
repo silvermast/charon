@@ -116,7 +116,7 @@ var lockerApp = new Vue({
 
         // clears & resets messages
         clearMessages: function() {
-            this.error = this.success = '';
+            this.warning = this.error = this.success = '';
         },
 
         // hashes the object
@@ -223,7 +223,12 @@ var lockerApp = new Vue({
                 method: 'get',
                 url: '/locker/' + lockerId,
                 success: function(result) {
-                    self.setObject(result);
+                    console.log(result);
+                    if (result === 'null') {
+                        self.warning = "Object Not Found.";
+                    } else {
+                        self.setObject(result);
+                    }
                     self.toggleLoader(false);
 
                 },

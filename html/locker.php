@@ -10,7 +10,7 @@ $headerOpts = [
 </head>
 
 <body>
-<? core\Template::output('nav-bar.html') ?>
+<? core\Template::output('nav-bar.php') ?>
     <!-- Fixes the strange chrome/firefox autocomplete spaz bug -->
     <input type="text" name="user" value="" style="display:none;" />
     <input type="password" name="password" value="" style="display:none;" />
@@ -217,7 +217,7 @@ $headerOpts = [
     </div>
 </body>
 
-<script type="text/x-template" id="tmpl-nav-bar"><?php include(ROOT . '/html/templates/nav-bar.html'); ?></script>
+<script type="text/x-template" id="tmpl-nav-bar"><?php include(ROOT . '/html/templates/nav-bar.php'); ?></script>
 <script src="/dist/js/build.js"></script>
 <script src="/dist/js/locker.js"></script>
 

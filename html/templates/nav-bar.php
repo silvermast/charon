@@ -8,7 +8,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/#/" tabindex="-1" v-text="appname"></a><span v-if="pageTitle"> - </span><span v-text="pageTitle"></span>
+                <a class="navbar-brand" href="/#/" tabindex="-1"><?=models\Account::current()->name?></a><span v-if="pageTitle"> - </span><span v-text="pageTitle"></span>
             </div>
 
             <div class="navbar-collapse collapse">
