@@ -513,6 +513,8 @@ var lockerApp = new Vue({
          */
         loginAttempt: function(item) {
             var url = item.url.indexOf('//') === -1 ? 'https://' + item.url : item.url;
+            window.open(url, '_blank');
+            return;
 
             // if non-http or https, pass through.
             if (url.indexOf('http') !== 0)
