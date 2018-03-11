@@ -516,7 +516,7 @@ var lockerApp = new Vue({
 
             // if non-http or https, pass through.
             if (url.indexOf('http') !== 0)
-                window.open(url);
+                window.open(url, '_blank');
 
             if (url.match(/wp-admin|wp-login\.php/)) {
                 var auth_url = url.replace(/wp-admin\/?/, 'wp-login.php');
@@ -527,7 +527,7 @@ var lockerApp = new Vue({
 
             } else {
                 // by default, just try to open the link.
-                window.open(url);
+                window.open(url, '_blank');
             }
         },
 

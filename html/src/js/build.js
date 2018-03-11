@@ -22882,12 +22882,10 @@ function bsConfirm(opts) {
  * @param data
  */
 function postNewWindow(url, data) {
-    var window_name = 'externalAuthWindow';
-
     var form_id = 'hiddenform-' + unique_id();
 
     // wordpress login
-    var $form = $('<form id="' + form_id + '" method="POST" action="' + url + '" target="' + window_name + '">');
+    var $form = $('<form id="' + form_id + '" method="POST" action="' + url + '" target="_blank">');
     for (var n in data) {
         if (!data.hasOwnProperty(n))
             continue;
@@ -22897,7 +22895,7 @@ function postNewWindow(url, data) {
     }
     $form.appendTo('body');
 
-    window.open('', window_name);
+    // window.open('', '_blank');
     $form.submit();
 
     setTimeout($form.remove, 10000);
