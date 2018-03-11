@@ -22876,6 +22876,44 @@ function bsConfirm(opts) {
     $modal.modal('show');
 }
 
+/**
+ * Opens a new window object and makes a POST request to it.
+ * @param url
+ * @param data
+ */
+function postNewWindow(url, data) {
+    var window_name = 'externalAuthWindow';
+
+    var form_id = 'hiddenform-' + unique_id();
+
+    // wordpress login
+    var $form = $('<form id="' + form_id + '" method="POST" action="' + url + '" target="' + window_name + '">');
+    for (var n in data) {
+        if (!data.hasOwnProperty(n))
+            continue;
+
+        var v = data[n];
+        $form.append('<input type="hidden" name="' + n + '" value="' + v + '">');
+    }
+    $form.appendTo('body');
+
+    window.open('', window_name);
+    $form.submit();
+
+    setTimeout($form.remove, 10000);
+}
+
+/**
+ * Generates a link object from a url
+ * @param url
+ * @returns {Element}
+ */
+function parseLink(url) {
+    var a = document.createElement('a');
+    a.href = url;
+    return a;
+}
+
 $.ajaxSetup({
     beforeSend: function(jqXHR, settings) {
         if (settings.data instanceof Object)

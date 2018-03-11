@@ -11,6 +11,7 @@ module.exports = function(grunt) {
                 src: [
                     'bower_components/bootstrap/dist/css/bootstrap.css',
                     'bower_components/font-awesome/css/font-awesome.css',
+                    'bower_components/roboto-condensed/css/roboto-condensed.css',
                     'html/src/css/bootstrap-flatly.min.css',
                     'html/src/css/main.css',
                 ],
@@ -59,9 +60,15 @@ module.exports = function(grunt) {
             }
         },
         copy: {
-            fonts: {
+            fontawesome: {
                 expand: true,
                 cwd: 'bower_components/font-awesome/fonts',
+                src: '**',
+                dest: 'html/dist/fonts/',
+            },
+            roboto: {
+                expand: true,
+                cwd: 'bower_components/roboto-condensed/fonts',
                 src: '**',
                 dest: 'html/dist/fonts/',
             },

@@ -120,10 +120,10 @@ $headerOpts = [
 
                                     <div class="col-sm-3 col-xs-7">
                                         <div class="input-group">
-                                            <input type="text" class="form-control borderless" :class="{'alert-info':fieldMatch(item.url)}" v-model="item.url" :focus="highlight" placeholder="URL" autocomplete="off">
+                                            <input type="text" class="form-control borderless" :class="{'alert-info':fieldMatch(item.url)}" v-model="item.url" @focus="highlight" placeholder="URL" autocomplete="off">
 
                                             <div class="input-group-addon pointer" v-if="item.url && item.url.length">
-                                                <a class="fa fa-link btn-link" :href="(item.url.indexOf('//') !== -1 ? item.url : 'http://' + item.url)" target="_new" tabindex="-1"></a>
+                                                <span class="fa fa-sign-in btn-link" @click="loginAttempt(item)" tabindex="-1"></span>
                                             </div>
                                         </div>
                                     </div>

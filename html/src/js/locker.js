@@ -195,7 +195,6 @@ var lockerApp = new Vue({
                     self.index = json_decode(result);
                 },
                 error: function(jqXHR) {
-                    console.log(jqXHR);
                     self.error = jqXHR.responseText;
                     if (jqXHR.status === 401)
                         window.logout();
@@ -223,7 +222,6 @@ var lockerApp = new Vue({
                 method: 'get',
                 url: '/locker/' + lockerId,
                 success: function(result) {
-                    console.log(result);
                     if (result === 'null') {
                         self.warning = "Object Not Found.";
                     } else {
@@ -507,6 +505,30 @@ var lockerApp = new Vue({
 
             var regexp = new RegExp(this.query.replace(' ', '.*'), 'i');
             return value.match(regexp) !== null;
+        },
+
+        /**
+         * Attempts to log the user in
+         * @param item
+         */
+        loginAttempt: function(item) {
+            var url = item.url.indexOf('//') === -1 ? 'https://' + item.url : item.url;
+
+            // if non-http or https, pass through.
+            if (url.indexOf('http') !== 0)
+                window.open(url);
+
+            if (url.match(/wp-admin|wp-login\.php/)) {
+                var auth_url = url.replace(/wp-admin\/?/, 'wp-login.php');
+                postNewWindow(auth_url, {
+                    log: item.user,
+                    pwd: item.pass
+                });
+
+            } else {
+                // by default, just try to open the link.
+                window.open(url);
+            }
         },
 
     }
