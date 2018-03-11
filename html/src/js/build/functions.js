@@ -1,3 +1,34 @@
+
+/**
+ * @type {{alert: Alerts.alert, success: Alerts.success, error: Alerts.error, warning: Alerts.warning, info: Alerts.info}}
+ */
+var Alerts = {
+    alert: function(obj) {
+        new Noty(obj).show();
+    },
+    success: function(msg, opts) {
+        this.alert($.extend({}, {type: 'success', text: msg}, opts));
+    },
+    error: function(msg, opts) {
+        this.alert($.extend({}, {type: 'error', text: msg}, opts));
+    },
+    warning: function(msg, opts) {
+        this.alert($.extend({}, {type: 'warning', text: msg}, opts));
+    },
+    info: function(msg, opts) {
+        this.alert($.extend({}, {type: 'info', text: msg}, opts));
+    },
+};
+
+Noty.overrideDefaults({
+    closeWith: ['click', 'button'],
+    timeout: 5000,
+    layout: 'bottomRight',
+    theme: 'none',
+});
+
+
+
 /**
  * Stores a cookie
  * @param string key
@@ -59,6 +90,53 @@ function clone(obj) {
 
 function runCallback(fn) {
     if (fn instanceof Function) fn.call();
+}
+
+
+/**
+ * @param obj
+ * @returns {*}
+ */
+function count(obj) {
+    return isObject(obj) ? Object.keys(obj).length : 0;
+}
+
+function isNumber(param) {
+    return typeof param === "number";
+}
+function isObject(param) {
+    return typeof param === "object";
+}
+function isString(param) {
+    return typeof param === "string";
+}
+function isArray(param) {
+    return param instanceof Array;
+}
+
+/**
+ *
+ * @param obj
+ * @returns {Array}
+ */
+function objKeys(obj) {
+    return Object.keys(obj);
+}
+
+/**
+ *
+ * @param obj
+ * @returns {Array}
+ */
+function objValues(obj) {
+    if (Object.values) {
+        return Object.values(obj);
+    } else {
+        var arr = [];
+        for (var i in obj)
+            arr.push(obj[i]);
+        return arr;
+    }
 }
 
 /**

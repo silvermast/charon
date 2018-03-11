@@ -12,6 +12,7 @@ module.exports = function(grunt) {
                     'bower_components/bootstrap/dist/css/bootstrap.css',
                     'bower_components/font-awesome/css/font-awesome.css',
                     'bower_components/roboto-condensed/css/roboto-condensed.css',
+                    'bower_components/noty/lib/noty.css',
                     'html/src/css/bootstrap-flatly.min.css',
                     'html/src/css/main.css',
                 ],
@@ -29,6 +30,7 @@ module.exports = function(grunt) {
 
                     // bootstrap & addons
                     'bower_components/bootstrap/dist/js/bootstrap.js',
+                    'bower_components/noty/lib/noty.js',
 
                     // CryptoJS utilities (AES & HMAC)
                     'html/lib/js/cryptojs/rollups/aes.js',

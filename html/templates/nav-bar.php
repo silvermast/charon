@@ -23,7 +23,7 @@
                             <li :class="{disabled: pagename == '/locker/'}"><a href="/locker/">Password Locker</a></li>
                             <li role="separator" class="divider"></li>
                             <li :class="{disabled: pagename == '/profile/'}"><a href="/profile/">My Profile</a></li>
-                            <li :class="{disabled: pagename == '/users/'}" v-if="hasPermission(10)"><a href="/users/">Manage Users</a></li>
+                            <li :class="{disabled: pagename == '/users/'}" v-if="hasPermission([1, 10])"><a href="/users/">Manage Users</a></li>
                             <!--<li :class="{disabled: pagename == '/account/'}" v-if="hasPermission(10)"><a href="/account/">Manage Account</a></li>-->
                             <li role="separator" class="divider"></li>
                             <li><a class="pointer" @click="logout" tabindex="-1"><i class="fa fa-sign-out"></i> Logout</a></li>

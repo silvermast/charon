@@ -6,7 +6,7 @@ Vue.component('nav-bar', {
     data: function() {
         return {
             pagename: location.pathname,
-            appname: 'Charon',
+            appname: 'SilverMast',
             user: {
                 name: '',
                 permLevel: 0,
@@ -14,15 +14,16 @@ Vue.component('nav-bar', {
         };
     },
     created: function() {
-        var scope = this;
+        var vm = this;
         $.get('/profile', function(result) {
-            scope.user = $.extend(scope.user, json_decode(AES.decrypt(result)));
+            vm.user = $.extend(vm.user, json_decode(AES.decrypt(result)));
+            vm.user.permLevel = parseInt(vm.user.permLevel);
         });
     },
     computed: {},
     methods: {
         hasPermission: function(perms) {
-            perms = perms.indexOf ? perms : [perms];
+            perms = isArray(perms) ? perms : [perms];
             return (this.user.permLevel == 1 || perms.indexOf(this.user.permLevel) !== -1);
         },
         logout: window.logout,

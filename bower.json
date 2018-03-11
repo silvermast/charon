@@ -21,6 +21,7 @@
     "Sortable": "sortablejs#^1.4.2",
     "vue.draggable": "^2.4.0",
     "font-awesome": "^4.7.0",
-    "roboto-condensed": "^0.3.0"
+    "roboto-condensed": "^0.3.0",
+    "noty": "^3.1.4"
   }
 }
