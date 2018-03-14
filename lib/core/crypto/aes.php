@@ -1,5 +1,5 @@
 <?php
-namespace core\openssl;
+namespace core\crypto;
 
 use core\Encoding;
 use \Exception;

@@ -17,11 +17,12 @@ class Router {
      * @var array
      */
     private static $_routes = [
-        'handshake' => 'api\\Handshake',
-        'login'     => 'api\\Login',
-        'logout'    => 'api\\Logout',
-        'locker'    => 'api\\Locker',
-        'user'      => 'api\\User',
+        'handshake'              => 'api\\Handshake',
+        'login'                  => 'api\\Login',
+        'logout'                 => 'api\\Logout',
+        'locker'                 => 'api\\Locker',
+        'user'                   => 'api\\User',
+        'request-password-reset' => 'api\\RequestPasswordReset',
     ];
 
     /**
@@ -57,8 +58,7 @@ class Router {
      * @return APIRoute
      */
     private static function _getAPIRoute(string $path) {
-
-        $path      = explode('/', $path);
+        $path      = preg_split('@[/|\?]@', $path);
         $classname = array_shift($path); // example: "url.com/classname/foo/bar
 
         // first check the static route list

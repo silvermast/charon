@@ -38,7 +38,7 @@ if ($pass1 != $pass2)
     finish('Passwords do not match.');
 
 $user->setPassword($pass1);
-$contentKey = core\openssl\AES::getRandomKey(32);
+$contentKey = core\crypto\AES::getRandomKey(32);
 $user->setContentKey($pass1, $contentKey);
 $user->save();
 

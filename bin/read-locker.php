@@ -20,7 +20,7 @@ $locker = models\Locker::findOne([
     'id' => $lockerId,
 ]);
 
-$locker->items = json_decode(core\openssl\AES::decrypt($locker->items, CLIUser::me()->contentKey));
+$locker->items = json_decode(core\crypto\AES::decrypt($locker->items, CLIUser::me()->contentKey));
 echo json_encode($locker, JSON_PRETTY_PRINT);
 echo "\n";
 die(0);

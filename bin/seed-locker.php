@@ -42,7 +42,7 @@ for ($i = 0; $i < 100; $i++) {
             'pass'      => randomString(mt_rand(8, 64)),
         ];
 
-    $locker->items = core\openssl\AES::encrypt(json_encode($locker->items), CLIUser::me()->contentKey);
+    $locker->items = core\crypto\AES::encrypt(json_encode($locker->items), CLIUser::me()->contentKey);
 
     $locker->save();
     echo '.';

@@ -1,4 +1,5 @@
 <?php
+
 namespace api;
 
 use models;
@@ -37,7 +38,15 @@ class Login extends core\APIRoute {
 
         $_SESSION['user_id'] = $dbUser->id;
 
-        $this->send($dbUser, 200);
+        $this->send([
+            'id'                  => $dbUser->id,
+            'accountId'           => $dbUser->accountId,
+            'name'                => $dbUser->name,
+            'email'               => $dbUser->email,
+            'permLevel'           => $dbUser->permLevel,
+            'passhash'            => $dbUser->passhash,
+            'contentKeyEncrypted' => $dbUser->contentKeyEncrypted,
+        ], 200);
 
     }
 

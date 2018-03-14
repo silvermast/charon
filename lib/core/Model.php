@@ -21,11 +21,15 @@ abstract class Model {
     /** @var mixed */
     protected static $_indexes;
 
+    /** @var \stdClass container for magic method getters */
+    protected $_magic;
+
     /**
      * Base constructor.
      * @param array $vars
      */
     public function __construct($vars = []) {
+        $this->_magic = new \stdClass;
         $this->setVars($vars);
     }
 

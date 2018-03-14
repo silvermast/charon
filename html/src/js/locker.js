@@ -97,13 +97,12 @@ var lockerApp = new Vue({
         index: {},
     },
     created: function() {
-        var self = this;
-        self.loadIndex();
-        self.loadObject();
+        var vm = this;
+        vm.loadIndex();
+        vm.loadObject();
 
-        self.timeouts.loadIndex       = setInterval(self.loadIndex, self.durations.loadIndex);
-        self.timeouts.checkForChanges = setInterval(self.checkForChanges, self.durations.checkForChanges);
-
+        vm.timeouts.loadIndex       = setInterval(vm.loadIndex, vm.durations.loadIndex);
+        vm.timeouts.checkForChanges = setInterval(vm.checkForChanges, vm.durations.checkForChanges);
     },
 
     computed: {
@@ -113,11 +112,6 @@ var lockerApp = new Vue({
     },
 
     methods: {
-
-        // clears & resets messages
-        clearMessages: function() {
-            this.warning = this.error = this.success = '';
-        },
 
         // hashes the object
         hashObject: function(obj) {
@@ -195,7 +189,7 @@ var lockerApp = new Vue({
                     self.index = json_decode(result);
                 },
                 error: function(jqXHR) {
-                    self.error = jqXHR.responseText;
+                    Alerts.error(jqXHR.responseText);
                     if (jqXHR.status === 401)
                         window.logout();
                 }
@@ -206,7 +200,6 @@ var lockerApp = new Vue({
         loadObject: function() {
             var self = this;
             self.toggleLoader(true);
-            self.clearMessages();
 
             var lockerId = getLockerId();
 
@@ -223,7 +216,7 @@ var lockerApp = new Vue({
                 url: '/locker/' + lockerId,
                 success: function(result) {
                     if (result === 'null') {
-                        self.warning = "Object Not Found.";
+                        Alerts.warning("Object Not Found.");
                     } else {
                         self.setObject(result);
                     }
@@ -235,7 +228,7 @@ var lockerApp = new Vue({
                         location.reload();
                         return;
                     }
-                    self.error = jqXHR.responseText;
+                    Alerts.error(jqXHR.responseText);
                     self.toggleLoader(false);
                     self.resetObject();
                 }
@@ -263,7 +256,7 @@ var lockerApp = new Vue({
                     if (self.hasChanged) {
                         // current locker has changed, and remote locker has changed
                         if (self.objectHash !== self.hashObject(result)) {
-                            self.warning     = 'This Locker has changed since it was loaded.';
+                            Alerts.warning('This Locker has changed since it was loaded.');
                             self.mergeNeeded = true;
                         }
 
@@ -279,7 +272,7 @@ var lockerApp = new Vue({
                         location.reload();
                         return;
                     }
-                    self.error = jqXHR.responseText;
+                    Alerts.error(jqXHR.responseText);
                 }
             });
 
@@ -289,7 +282,6 @@ var lockerApp = new Vue({
         mergeObject: function(callback) {
             var self = this;
             self.toggleLoader(true);
-            self.clearMessages();
 
             var lockerId = getLockerId();
 
@@ -362,7 +354,7 @@ var lockerApp = new Vue({
                         location.reload();
                         return;
                     }
-                    self.error = jqXHR.responseText;
+                    Alerts.error(jqXHR.responseText);
                     self.toggleLoader(false);
                     self.timeouts.checkForChanges = setInterval(self.checkForChanges, self.durations.checkForChanges);
                     runCallback(callback);
@@ -372,37 +364,36 @@ var lockerApp = new Vue({
 
         // Saves the Locker object
         saveObject: function() {
-            var self = this;
+            var vm = this;
 
             // perform merge first in acse there are any outstanding changes that need to be loaded
-            self.mergeObject(function() {
+            vm.mergeObject(function() {
 
-                self.toggleLoader(true);
-                self.clearMessages();
+                vm.toggleLoader(true);
 
                 // encrypt
-                var ajaxData = $.extend(true, clone(self.object), {
-                    items: AES.encrypt(json_encode(self.object.items))
+                var ajaxData = $.extend(true, clone(vm.object), {
+                    items: AES.encrypt(json_encode(vm.object.items))
                 });
 
                 console.log(ajaxData);
 
                 $.ajax({
                     method: 'post',
-                    url: '/locker/' + self.object.id,
+                    url: '/locker/' + vm.object.id,
                     data: json_encode(ajaxData),
                     success: function(result) {
                         // Set the data into the object
-                        self.setObject(result);
+                        vm.setObject(result);
 
                         // set the hash id
-                        location.hash = '#/' + self.object.id;
+                        location.hash = '#/' + vm.object.id;
 
-                        self.loadIndex();
-                        self.toggleLoader(false);
+                        vm.loadIndex();
+                        vm.toggleLoader(false);
 
                         // set success message
-                        self.success = 'Successfully saved the object';
+                        Alerts.success('Successfully saved the object', {layout: 'bottomCenter'});
 
                     },
                     error: function(jqXHR) {
@@ -411,8 +402,8 @@ var lockerApp = new Vue({
                             return;
                         }
 
-                        self.error = jqXHR.responseText;
-                        self.toggleLoader(false);
+                        Alerts.error(jqXHR.responseText);
+                        vm.toggleLoader(false);
                     }
 
                 });
@@ -421,30 +412,37 @@ var lockerApp = new Vue({
 
         // Permanently deletes the entire Locker object
         deleteObject: function() {
-            var self = this;
-            self.toggleLoader(true);
-            self.clearMessages();
+            var vm = this;
 
-            // send or pull the object
-            $.ajax({
-                method: 'delete',
-                url: '/locker/' + self.object.id,
-                success: function(result) {
-                    self.success = result;
-                    self.resetObject();
-                    self.loadIndex();
-                    self.toggleLoader(false);
+            bsConfirm({
+                text: 'Are you sure you want to delete this Locker? This action cannot be undone.',
+                confirm: function() {
+
+                    vm.toggleLoader(true);
+
+                    // send or pull the object
+                    $.ajax({
+                        method: 'delete',
+                        url: '/locker/' + vm.object.id,
+                        success: function(result) {
+                            Alerts.success(result, {layout: 'bottomCenter'});
+                            vm.resetObject();
+                            vm.loadIndex();
+                            vm.toggleLoader(false);
+                        },
+                        error: function(jqXHR) {
+                            if (jqXHR.status == 401) {
+                                location.reload();
+                                return;
+                            }
+
+                            Alerts.error(jqXHR.responseText);
+                            vm.toggleLoader(false);
+                        }
+
+                    });
+
                 },
-                error: function(jqXHR) {
-                    if (jqXHR.status == 401) {
-                        location.reload();
-                        return;
-                    }
-
-                    self.error = data;
-                    self.toggleLoader(false);
-                }
-
             });
 
         },

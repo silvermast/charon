@@ -4,8 +4,8 @@ namespace api;
 use models;
 use \Exception;
 use core;
-use core\openssl\RSA;
-use core\openssl\AES;
+use core\crypto\RSA;
+use core\crypto\AES;
 
 /**
  * Handles a RSA-encrypted AES key exchange

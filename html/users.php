@@ -76,7 +76,7 @@
                                 <label class="small text-muted">Email</label>
                             </div>
 
-                            <div class="form-group" :class="{'has-error': !passwordVerify || !passwordsMatch}">
+                            <div class="form-group" :class="{'has-error': !passwordVerify || !passwordsMatch}" v-if="objectIsMe || canEdit">
                                 <button class="btn btn-primary btn-sm" v-if="!changingPassword" @click="startChangePassword()">Change Password</button>
                                 <div v-if="changingPassword">
                                     <input type="password" class="form-control borderless" v-model="changePass1" />
@@ -101,8 +101,10 @@
                             </div>
 
                             <hr />
-                            <button class="btn btn-success" @click="saveObject()">Save</button>
-                            <button class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete" v-if="object.id">Delete</button>
+                            <div v-if="canEdit">
+                                <button class="btn btn-success" @click="saveObject()">Save</button>
+                                <button class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete" v-if="object.id">Delete</button>
+                            </div>
                         </div>
                     </div>
 

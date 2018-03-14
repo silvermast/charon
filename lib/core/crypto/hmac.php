@@ -1,5 +1,5 @@
 <?php
-namespace core\openssl;
+namespace core\crypto;
 
 /**
  * Hashing class for verifying encryption tags

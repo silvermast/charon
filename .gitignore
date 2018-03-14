@@ -1,6 +1,7 @@
 data
 .idea
 .DS_Store
+vendor
 config.php
 node_modules
 error.log

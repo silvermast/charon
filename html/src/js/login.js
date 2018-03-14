@@ -3,26 +3,29 @@ Vue.component('login-form', {
     template: '#login-form-template',
     data: function() {
         return {
-            error: '',
+            isBusy: false,
+            page: 'login',
+
             email: '',
             pass: '',
         };
     },
     methods: {
-        loginAttempt: function (e) {
-            e.preventDefault();
 
-            var scope = this;
+        /**
+         * Attempts to log in
+         * @param e
+         */
+        loginAttempt: function() {
+            var vm = this;
 
-            UserKeychain.setPassword(scope.pass);
+            UserKeychain.resetStorage();
+            UserKeychain.setPassword(vm.pass);
 
             var ajaxData = {
-                email: scope.email,
+                email: vm.email,
                 passhash: UserKeychain.PassHash,
             };
-
-            // clear error
-            scope.error = '';
 
             $.post({
                 url: '/login',
@@ -34,14 +37,35 @@ Vue.component('login-form', {
                         UserKeychain.saveToStorage();
                         location.reload();
                     } else {
-                        scope.error = 'Error decrypting ContentKey';
+                        Alerts.error('Error decrypting ContentKey', {layout: 'topRight'});
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    scope.error = jqXHR.responseText;
+                    Alerts.error(jqXHR.responseText, {layout: 'topRight'});
                 }
             });
 
+        },
+
+        /**
+         * Requests a password reset
+         */
+        requestPasswordReset: function() {
+            var vm = this;
+            vm.isBusy = true;
+            $.post({
+                url: '/request-password-reset',
+                data: json_encode({email: vm.email}),
+                dataType: 'text',
+                success: function(result) {
+                    Alerts.success(result);
+                    vm.isBusy = false;
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    Alerts.error(jqXHR.responseText, {layout: 'topRight'});
+                    vm.isBusy = false;
+                }
+            });
         },
     }
 });

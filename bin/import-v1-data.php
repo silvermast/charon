@@ -89,7 +89,7 @@ foreach ($oldLockers as $filename) {
         $newItem            = models\Locker::new($oldItem);
         $newItem->id        = null;
         $newItem->accountId = models\Account::current()->id;
-        $newItem->items     = core\openssl\AES::encrypt(json_encode($newItem->items), CLIUser::me()->contentKey);
+        $newItem->items     = core\crypto\AES::encrypt(json_encode($newItem->items), CLIUser::me()->contentKey);
 
         $newItem->validate()->save();
         echo '.';

@@ -59,19 +59,6 @@ $headerOpts = [
 
                         <div v-show="!loader">
 
-                            <div class="alert alert-success" v-if="success">
-                                <button type="button" class="close" @click="clearMessages">&times;</button>
-                                <span v-html="success"></span>
-                            </div>
-                            <div class="alert alert-warning" v-if="warning">
-                                <button type="button" class="close" @click="clearMessages">&times;</button>
-                                <span v-html="warning"></span>
-                            </div>
-                            <div class="alert alert-danger" v-if="error">
-                                <button type="button" class="close" @click="clearMessages">&times;</button>
-                                <span v-html="error"></span>
-                            </div>
-
                             <h1 class="page-header">
                                 <input type="text" class="form-control input-lg borderless" v-model="object.name" placeholder="Add New Locker" autofocus>
                             </h1>
@@ -177,7 +164,7 @@ $headerOpts = [
                             <div class="row" v-if="object.name && object.name.length">
                                 <div class="col-md-3 col-md-offset-9 col-sm-12 text-right">
                                     <span data-toggle="popover" data-content="Deletes the Group permanently. You will be prompted for confirmation.">
-                                        <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#confirm-delete" tabindex="-1">Delete</button>
+                                        <button type="button" class="btn btn-danger btn-lg" @click="deleteObject" tabindex="-1">Delete</button>
                                     </span>
                                     <span data-toggle="popover" data-content="Saves the Group">
                                         <button type="button" class="btn btn-success btn-lg" @click="saveObject">Save</button>
@@ -185,27 +172,6 @@ $headerOpts = [
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Delete Modal -->
-                        <div class="modal" id="confirm-delete">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    <h4 class="modal-title">Are you sure?</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <h5>Delete <span v-text="object.name"></span> Group?</h5>
-                                    <div>This action cannot be undone.</div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                                    <button type="button" class="btn btn-danger" @click="deleteObject" data-dismiss="modal">Delete</button>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Delete Modal -->
 
                     </form>
                 </div>

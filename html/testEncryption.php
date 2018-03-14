@@ -6,7 +6,7 @@
  * @package charon
  */
 require_once(__DIR__ . '/../core.php');
-use core\openssl\AES;
+use core\crypto\AES;
 use core\Encoding;
 
 $semanticString      = new core\SemanticString();

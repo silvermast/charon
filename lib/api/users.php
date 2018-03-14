@@ -61,15 +61,19 @@ class Users extends core\APIRoute {
         $user = $user ?? models\User::new();
 
         // Check user permissions against object being saved.
-        switch ($user->permLevel) {
+        switch (models\User::me()->permLevel) {
             // only Owners can modify Owners/Admins
-            case models\User::PERMLEVELS['Owner']:
-            case models\User::PERMLEVELS['Admin']:
-                $this->checkPermission();
+            case PERMLEVEL_OWNER:
                 break;
 
-            case models\User::PERMLEVELS['Member']:
+            case PERMLEVEL_ADMIN:
+                if ($user->permLevel == PERMLEVEL_OWNER)
+                    throw new Exception('You do not have permission to do edit Owner users.', 400);
+                break;
+
+            case PERMLEVEL_MEMBER:
             default:
+                throw new Exception('You do not have permission to do edit other users.', 400);
                 break;
         }
 

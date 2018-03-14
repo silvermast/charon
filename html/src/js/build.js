@@ -25726,6 +25726,13 @@ var Keychain = function() {
     };
 
     /**
+     * Deletes the stored ContentKey and metadata
+     */
+    this.resetStorage = function() {
+        localStorage.removeItem('UserKeychain');
+    };
+
+    /**
      * loads the object from localStorage
      * @returns {Keychain}
      */
@@ -25784,17 +25791,43 @@ var Keychain = function() {
 
     // Decrypts the content key and sets it
     this.setContentKey = function(contentKeyEncrypted) {
-        var decObj = AES.decrypt(contentKeyEncrypted, this.getContentKeyKey());
+        console.log('contentKeyEncrypted', contentKeyEncrypted);
+        window.decObj = AES.decrypt(contentKeyEncrypted, this.getContentKeyKey());
+        console.log('decObj', decObj);
         this.ContentKey = decObj.toString(CryptoJS.enc.Utf8);
+        console.log(this.ContentKey);
         this._ContentKey = CryptoJS.enc.Hex.parse(this.ContentKey);
     };
 
     // returns the encrypted content key
-    this.getContentKeyEncrypted = function() {
-        return AES.encrypt(this.ContentKey, this.getContentKeyKey());
+    this.getContentKeyEncrypted = function(pass) {
+        if (pass) {
+            key = CryptoJS.PBKDF2(CryptoJS.enc.Utf8.parse(pass), 'Charon.UserSQ', {
+                iterations: 1030,
+                hasher: CryptoJS.algo.SHA256,
+                keySize: 256/32,
+            });
+        } else {
+            key = this.getContentKeyKey();
+        }
+        return AES.encrypt(this.ContentKey, key);
     };
 
 };
+
+/**
+ * @param answer
+ * @param qIndex
+ * @returns {string}
+ */
+function hashSQ(answer, qIndex) {
+    var passObj = CryptoJS.enc.Utf8.parse(answer);
+    return CryptoJS.PBKDF2(passObj, 'Charon.UserSQ.' + qIndex, {
+        iterations: 1030,
+        hasher: CryptoJS.algo.SHA256,
+        keySize: 256/32,
+    }).toString(CryptoJS.enc.Hex);
+}
 
 /**
  * Current authenticated Keychain

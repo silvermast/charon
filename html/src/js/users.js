@@ -26,10 +26,9 @@ var usersApp = new Vue({
 
         // display messages
         loader: true,
-        success: '',
-        error: '',
         query: '',
         users: [],
+        me: {},
 
         object: getBlankUser(),
         objectHash: false,
@@ -46,9 +45,15 @@ var usersApp = new Vue({
         timeouts: {},
     },
     created: function() {
-        var scope = this;
-        scope.loadIndex();
-        scope.loadObject();
+        var vm = this;
+        vm.loadIndex();
+        vm.loadObject();
+
+        $.get('/profile', function(result) {
+            vm.me = $.extend(vm.me, json_decode(AES.decrypt(result)));
+            vm.me.permLevel = parseInt(vm.me.permLevel);
+            vm.$forceUpdate();
+        });
     },
     computed: {
         hasChanged: function() {
@@ -62,6 +67,27 @@ var usersApp = new Vue({
         },
         passwordsMatch: function() {
             return this.changePass1.length === 0 || this.changePass1 === this.changePass2;
+        },
+        canEdit: function() {
+            if (this.me.id === this.object.id)
+                return true;
+
+            switch (this.me.permLevel) {
+                case 1: // owners can edit anybody
+                    return true;
+
+                case 10: // admins can edit members and other admins
+                    return !this.object.id || parseInt(this.object.permLevel) !== 1;
+
+                case 20:
+                    return false;
+
+                default:
+                    return false;
+            }
+        },
+        objectIsMe: function() {
+            return this.me && this.object && this.me.id === this.object.id;
         },
     },
 
@@ -176,7 +202,7 @@ var usersApp = new Vue({
                     scope.objectHash = md5(json_encode(scope.object));
 
                     // set success message
-                    scope.success = 'Successfully saved the user';
+                    Alerts.success('Successfully saved the user');
 
                 },
                 error: function(jqXHR) {
@@ -206,7 +232,7 @@ var usersApp = new Vue({
                     location.hash = '#/';
                     scope.loadIndex();
 
-                    scope.success = 'Successfully deleted the user';
+                    Alerts.success('Successfully deleted the user');
                 },
                 error: function(jqXHR) {
                     if (jqXHR.status == 401) {

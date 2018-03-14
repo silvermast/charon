@@ -1,5 +1,5 @@
 <?php
-namespace test\core\openssl;
+namespace test\core\crypto;
 /**
  * @author Jason Wright <jason@silvermast.io>
  * @since 1/11/17
@@ -18,8 +18,8 @@ class AESTest extends \PHPUnit_Framework_TestCase {
     public function test() {
         $data = 'this is a very secure password that needs to be stored';
 
-        $cipher = core\openssl\AES::encrypt($data);
-        $result = core\openssl\AES::decrypt($cipher);
+        $cipher = core\crypto\AES::encrypt($data);
+        $result = core\crypto\AES::decrypt($cipher);
 
         $this->assertEquals($data, $result);
 
