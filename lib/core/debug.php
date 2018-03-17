@@ -28,7 +28,7 @@ class Debug {
      * @param $type
      */
     private static function write($message, $type) {
-        $message = $message instanceof \Exception ? $message->getMessage() : $message;
+        $message = $message instanceof \Exception ? get_class($message) . ' - ' . $message->getMessage() : $message;
         $message = is_scalar($message) ? $message : json_encode($message);
 
         if (!is_dir(ROOT . '/log'))
