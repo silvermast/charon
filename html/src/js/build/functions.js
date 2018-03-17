@@ -4,19 +4,19 @@
  */
 var Alerts = {
     alert: function(obj) {
-        new Noty(obj).show();
+        return new Noty(obj).show();
     },
     success: function(msg, opts) {
-        this.alert($.extend({}, {type: 'success', text: msg}, opts));
+        return this.alert($.extend({}, {type: 'success', text: msg}, opts));
     },
     error: function(msg, opts) {
-        this.alert($.extend({}, {type: 'error', text: msg}, opts));
+        return this.alert($.extend({}, {type: 'error', text: msg}, opts));
     },
     warning: function(msg, opts) {
-        this.alert($.extend({}, {type: 'warning', text: msg}, opts));
+        return this.alert($.extend({}, {type: 'warning', text: msg}, opts));
     },
     info: function(msg, opts) {
-        this.alert($.extend({}, {type: 'info', text: msg}, opts));
+        return this.alert($.extend({}, {type: 'info', text: msg}, opts));
     },
 };
 

@@ -34,7 +34,7 @@ class Email {
             ]);
 
             $result = $client->sendEmail(array_merge_recursive([
-                'Source'      => 'no-reply@silvermast.io',
+                'Source'      => 'SilverMast <no-reply@silvermast.io>',
                 'Destination' => [
                     'ToAddresses' => is_array($to) ? $to : [$to],
                 ],

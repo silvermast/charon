@@ -46,10 +46,10 @@ class RequestPasswordReset extends core\APIRoute {
 
         // notify the user if the email doesn't exist. Often they forgot which email they're using.
         if (!$user)
-            throw new Exception("No user found with the email address {$this->data->email}");
+            throw new Exception("No user found with the email address {$this->data->email}", 400);
 
         if (!$user->sqIsValid)
-            throw new Exception("That user never filled out their security questions. Unfortunately, we'll be unable to help you reset the password.");
+            throw new Exception("That user never filled out their security questions. Unfortunately, we'll be unable to help you reset the password.", 400);
 
         // token expires after 24 hours
         $user->passwordResetToken = core\Util::wsB64Encode((time() + 86400) . '|' . random_bytes(64));
