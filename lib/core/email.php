@@ -22,7 +22,7 @@ class Email {
      * @param array $extra
      * @throws Exception
      */
-    private static function send($to, $subject, $body, $extra = []) {
+    public static function send($to, $subject, $body, $extra = []) {
         // aws ses send-email --from $email --to $email --text $body --subject $subject --region us-west-2
         try {
             if (!$to)
