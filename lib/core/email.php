@@ -56,8 +56,6 @@ class Email {
                 ],
             ], $extra));
 
-            Debug::info($result);
-
         } catch (\Exception $e) {
             Debug::error($e);
             throw new \Exception('Failed to send email');
@@ -70,7 +68,6 @@ class Email {
     public static function request_password_reset(\models\User $user) {
         $subject = "{$user->Account->name} password reset request";
         $message = Template::get('email/tmpl.request-password-reset.php', ['user' => $user]);
-        Debug::info([__METHOD__, $user]);
         self::send($user->email, $subject, $message);
     }
 

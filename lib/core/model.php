@@ -169,7 +169,6 @@ abstract class Model {
      */
     public static function count($query, $queryOptions = []) {
         $count = 0;
-        Debug::info($query);
         try {
             $dbQuery = new Query($query, $queryOptions);
             $result = self::_db()->executeQuery(static::getDBNamespace(), $dbQuery);
