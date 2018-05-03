@@ -10126,3 +10126,11 @@ a, a:hover {
 .h-300 { height: 300px !important; }
 .h-350 { height: 350px !important; }
 .h-400 { height: 400px !important; }
+
+
+.disappear {
+    height: 0 !important;
+    width: 0 !important;
+    position: absolute !important;
+    z-index: -1000 !important;
+}

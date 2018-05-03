@@ -12,8 +12,8 @@ $headerOpts = [
 <body>
 <? core\Template::output('nav-bar.php') ?>
     <!-- Fixes the strange chrome/firefox autocomplete spaz bug -->
-    <input type="text" name="user" value="" style="display:none;" />
-    <input type="password" name="password" value="" style="display:none;" />
+    <input type="text" name="user" value="" autocomplete="on" class="disappear" />
+    <input type="password" name="password" value="" autocomplete="on" class="disappear" />
 
     <div id="page-container">
 
@@ -32,7 +32,7 @@ $headerOpts = [
 
                         <ul class="nav nav-sidebar nav-sidebar-sticky">
                             <li>
-                                <input id="search" type="search" class="form-control sidebar-search" placeholder="Search" v-model="query" autofocus style="padding-right:2em;">
+                                <input id="search" type="search" class="form-control sidebar-search" placeholder="Search" v-model="query" autofocus autocomplete="0" style="padding-right:2em;">
                                 <span class="search-clear" @click="query = ''" v-show="query"><i class="fa fa-times-circle"></i></span>
                             </li>
                             <li :class="{active: !object.id}">
@@ -52,6 +52,8 @@ $headerOpts = [
                     </div>
 
                     <form class="col-xs-12 col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" autocomplete="off" @submit.prevent="">
+                        <input type="text" name="user" value="" autocomplete="on" class="disappear"/>
+                        <input type="password" name="password" value="" autocomplete="on" class="disappear"/>
 
                         <div class="text-center" v-show="loader">
                             <img src="/img/loader.svg" width="100%">
