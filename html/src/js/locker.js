@@ -95,6 +95,8 @@ var lockerApp = new Vue({
          * @type {Array}
          */
         index: {},
+
+        user: {},
     },
     created: function() {
         var vm = this;
@@ -494,6 +496,47 @@ var lockerApp = new Vue({
 
             return this.index[id].items.match(regexp) !== null;
 
+        },
+
+        // exports the entire account locker as CSV
+        exportCSV: function() {
+            var lockerList = [], i, j;
+
+            for (i in this.index) {
+                var locker = this.index[i];
+                var items  = locker.items && locker.items.iv ? json_decode(AES.decryptToUtf8(locker.items)) : [];
+
+                for (j in items) {
+                    var item = items[j];
+
+                    lockerList.push({
+                        'Locker': locker.name || '',
+                        'Item Title': item.title || '',
+                        'Item URL': item.url || '',
+                        'Item User': item.user || '',
+                        'Item Pass': item.pass || '',
+                    });
+                }
+
+                if (locker.note) {
+                    lockerList.push({
+                        'Locker': locker.name || '',
+                        'Item Title': locker.note,
+                        'Item URL': '',
+                        'Item User': '',
+                        'Item Pass': '',
+                    });
+                }
+            }
+
+            console.log(lockerList);
+            console.log(Papa.unparse(lockerList));
+
+            var $a = document.createElement('a');
+            $a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(Papa.unparse(lockerList));
+            $a.target = '_blank';
+            $a.download = 'Lockers.csv';
+            $a.click();
         },
 
         // Determines whether the field matches the query string

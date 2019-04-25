@@ -22,6 +22,7 @@ module.exports = function(grunt) {
                 src: [
                     // jquery & addons
                     'bower_components/jquery/dist/jquery.js',
+                    'node_modules/papaparse/papaparse.min.js',
 
                     // vuejs & addons
                     'bower_components/vue/dist/vue.js',

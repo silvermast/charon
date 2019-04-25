@@ -1,4 +1,4 @@
-Vue.component('nav-bar', {
+window.navApp = Vue.component('nav-bar', {
     template: '#tmpl-nav-bar',
     props: {
         pageTitle: String
@@ -18,7 +18,7 @@ Vue.component('nav-bar', {
         $.get('/profile', function(result) {
             vm.user = $.extend(vm.user, json_decode(AES.decrypt(result)));
             vm.user.permLevel = parseInt(vm.user.permLevel);
-
+            lockerApp.user = vm.user;
             vm.showSecurityQuestionModal();
         });
     },
@@ -30,20 +30,14 @@ Vue.component('nav-bar', {
         },
 
         showSecurityQuestionModal: function() {
-            if (location.pathname.indexOf('/profile') !== -1) {
-                console.log('not showing modal. on /profile');
+            if (location.pathname.indexOf('/profile') !== -1)
                 return; // user is already on the profile page. They see it.
-            }
 
-            if (this.user.sq1A && this.user.sq2A && this.user.sq3A) {
-                console.log('not showing modal. sq questions set: ', this.user.sq1A, this.user.sq2A, this.user.sq3A);
+            if (this.user.sq1A && this.user.sq2A && this.user.sq3A)
                 return; // user has already set their security questions
-            }
 
-            if (sessionStorage.getItem('ignoreSQModal')) {
-                console.log('not showing modal. ignore flag set');
+            if (sessionStorage.getItem('ignoreSQModal'))
                 return; // User clicked ignore
-            }
 
 
             var msg = "<h2>Complete your Security Questions</h2>";

@@ -43,6 +43,9 @@ $headerOpts = [
                             <li v-for="(indexItem, key) in index" :class="{active: indexItem.id == object.id}" v-if="!query || search(key)">
                                 <a class="index-anchor" :href="'#/' + indexItem.id" tabindex="-1"><i class="fa fa-book"></i> <span v-text="indexItem.name"></span></a>
                             </li>
+                            <li v-if="user.permLevel === 1">
+                                <a class="btn btn-link text-left" style="text-align: left;" @click="exportCSV"><span class="fa fa-download"></span> Export All</a>
+                            </li>
                         </ul>
 
                         <div class="text-center hidden-sm hidden-md hidden-lg">

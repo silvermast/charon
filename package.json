@@ -5,7 +5,8 @@
   "main": "Gruntfile.js",
   "dependencies": {
     "grunt": "^1.0.1",
-    "grunt-cli": "^1.2.0"
+    "grunt-cli": "^1.2.0",
+    "papaparse": "^4.6.3"
   },
   "devDependencies": {
     "cryptico": "^1.0.2",
