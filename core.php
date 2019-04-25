@@ -5,6 +5,7 @@
  * @since Feb 18, 2015
  * @copyright 2015 Jason Wright
  */
+define('VERSION', '2019-04-24.01');
 ini_set('error_log', __DIR__ . '/log/error.log');
 error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_STRICT);
 

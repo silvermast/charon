@@ -189,7 +189,7 @@ $headerOpts = [
 </body>
 
 <script type="text/x-template" id="tmpl-nav-bar"><?php include(ROOT . '/html/templates/nav-bar.php'); ?></script>
-<script src="/dist/js/build.js"></script>
-<script src="/dist/js/locker.js"></script>
+<script src="/dist/js/build.js?release=<?=VERSION?>"></script>
+<script src="/dist/js/locker.js?release=<?=VERSION?>"></script>
 
 </html>
